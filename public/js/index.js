@@ -14,9 +14,10 @@ const socket = io();
 
 
         socket.on("newMessage", function(message) {
+            const formattedTime = moment(message.createdAt).format("h:mm a");
             console.log("New Message: ", message);
             const li = jQuery("<li></li>");
-            li.text(`${message.from}: ${message.text}`);
+            li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
             jQuery("#messages").append(li);
         });
@@ -29,10 +30,11 @@ const socket = io();
         });*/
 
         socket.on("newLocationMessage", function(message) {
+            const formattedTime = moment(message.createdAt).format("h:mm a");
             const li = jQuery("<li></li>");
             const a = jQuery("<a target='_blank'>My current location</a>");
 
-            li.text(`${message.from}: `);
+            li.text(`${message.from} ${formattedTime}: `);
             a.attr("href", message.url);
 
             li.append(a);
@@ -70,6 +72,7 @@ const socket = io();
                 });
             }, function(e) {
                 alert("Unable to fetch location");
-                locationButton.removeAttr("disabled").text("Send location");
+                locationButton.removeAttr("disabled").text("Send location"
+                );
             });
         });

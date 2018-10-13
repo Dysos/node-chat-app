@@ -10,7 +10,7 @@ describe("generateMessage", () => {
         const res = generateMessage(from, text);
         //expect(res.from).toBe(from);
         //expect(res.text).toBe(text);
-        expect(res.createdAt).toBeA("string");
+        expect(res.createdAt).toBeA("number");
         expect(res).toInclude({
             from,
             text
@@ -26,7 +26,7 @@ describe("generateLocationMessage", () => {
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
         const res = generateLocationMessage(from, latitude, longitude);
-        expect(res.createdAt).toBeA("string");
+        expect(res.createdAt).toBeA("number");
         expect(res.url).toBe(url);
         expect(res.from).toBe(from);
     });
