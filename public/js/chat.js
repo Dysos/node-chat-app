@@ -17,12 +17,16 @@ const socket = io();
             }
         }
         socket.on("connect", function() {
-            console.log("Connected to server");
-            /*
-            socket.emit("createMessage", {
-                from: "Hugh Mongus",
-                text: "Do you want to know my name?"
-            });*/
+            const params = jQuery.deparam(window.location.search);
+
+            socket.emit("join", params, function (err) {
+                if(err) {
+                    alert(err);
+                    window.location.href="/";
+                } else {
+                    console.log("No Error");
+                }
+            });
         });
 
         socket.on("disconnect", function() {
