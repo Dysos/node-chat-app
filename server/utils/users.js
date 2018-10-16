@@ -1,26 +1,71 @@
-[{
-    id:"aiwjdaiwjdio",
-    name: "Andrew",
-    room: "The Office Fans"
-}]
+const uuid = require("uuid/v4");
 
-//adduser(id,name,room)
 
-//removeuser(id)
+class User {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+        this.rooms = [];
+        this.currentRoom = "";
+        this.uuid = uuid();
+    }
 
-//getuser(id)
+    addRoom(room) {
+        this.rooms.push(room);
+    }
 
-//getuserlist(room)
+    changeRoom(room) {
+        this.currentRoom = room;
+    }
+}
+
+class Room {
+    constructor(name) {
+        this.name = name.toLowerCase();
+    }  
+}
+
+class Rooms {
+    constructor() {
+        this.rooms = [];
+    }
+    addRoom(name) {
+        const lowerCaseName = name.toLowerCase();
+        const room = this.rooms.find((room) => {
+            return room.name === lowerCaseName;
+        });
+        if(!room) {
+            const room = new Room(name);
+            this.rooms.push(room);
+            console.log("All rooms: ", this.rooms);
+            return true;
+        }
+        return false;
+    }
+    getRoomList() {
+        return this.rooms;
+    }
+    /*
+    addUserToRoom(id, roomName) {
+        this.rooms.forEach((room) => {
+            if(room.name === roomName) {
+                room.users.push()
+            }
+        })
+    }*/
+}
 
 class Users {
     constructor() {
         this.users = [];
     }
-    addUser(id,name,room) {
-        const user = {id, name, room};
+    addUser(id,name) {
+       /* const user = {id, name, room};
         this.users.push(user);
-        return user;
+        return user;*/
+        this.users.push(new User(id,name));
     }
+
     removeUser(id) {
         const removedUser = this.users.find((user) => user.id === id);
         this.users = this.users.filter((user) => {
@@ -33,7 +78,7 @@ class Users {
     }
     getUserList(room) {
         let users = this.users.filter((user) => {
-            return user.room === room;
+            return user.currentRoom === room;
         });
         const namesArray = users.map((user) => {
             return user.name;
@@ -41,9 +86,24 @@ class Users {
 
         return namesArray;
     }
+
+    addUserToRoom(id, roomName) {
+        const user = this.users.find((user) => user.id === id);
+        user.addRoom({
+            name: roomName.toLowerCase()
+        });
+    }
+
+    changeCurrentRoom(id, roomName) {
+        const user = this.users.find((user) => user.id === id);
+        user.changeRoom(roomName.toLowerCase());
+        console.log(roomName);
+        console.log(user);
+    }
 }
 
-module.exports = {Users};
+
+module.exports = {Users, Rooms};
 /*
 class Person {
     constructor (name, age) {

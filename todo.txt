@@ -1,0 +1,30 @@
+create user object (DONE)
+create room object (DONE)
+
+work out users array (DONE)
+create rooms array (DONE)
+
+allow users to join existing room, or create a new one
+by typing it in (DONE)
+
+fixed scroll bug (DONE)
+
+users can join room by clicking on it
+
+
+
+display this in the chat UI. This should be reworked
+
+Add profile pictures
+add 'active now' effect on this
+
+add user profiles
+add friends 
+add direct messaging
+
+Update title with new message
+Add channels
+
+
+allow users to register, save their data on mongodb
+allow users to login. Let users persist.

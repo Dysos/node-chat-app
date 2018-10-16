@@ -5,7 +5,7 @@ const socketIO = require("socket.io");
 
 const {generateMessage, generateLocationMessage} = require("./utils/message");
 const {isRealString} = require("./utils/validation");
-const {Users} = require("./utils/users");
+const {Users, Rooms} = require("./utils/users");
 const publicPath = path.join(__dirname, "../public");
 
 
@@ -13,6 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 const users = new Users();
+const rooms = new Rooms();
 const port = process.env.PORT || 3002;
 
 app.use(express.static(publicPath));
@@ -26,11 +27,18 @@ io.on("connection", (socket) => {
         if(!isRealString(params.name) || !isRealString(params.room)) {
             return callback("Please input valid info");
         }
-
-        socket.join(params.room);
+        params.room = params.room.toLowerCase();
+        socket.join(params.room.toLowerCase());
+        //const newUser = new User(socket.id, params.name);
         users.removeUser(socket.id);
-        users.addUser(socket.id, params.name, params.room);
+        users.addUser(socket.id, params.name);
+        rooms.addRoom(params.room);
 
+        users.addUserToRoom(socket.id, params.room);
+        users.changeCurrentRoom(socket.id, params.room);
+
+        //users.addUser(socket.id, params.name, params.room);
+        io.emit("updateRoomList", rooms.getRoomList());
         io.to(params.room).emit("updateUserList", users.getUserList(params.room));
         socket.emit("newMessage", generateMessage("Server", "Welcome to the server"));
         socket.broadcast.to(params.room).emit("newMessage", generateMessage("Server", `${params.name} has joined the server`));
@@ -48,7 +56,7 @@ io.on("connection", (socket) => {
         //console.log("New Message: ", message);
         const user = users.getUser(socket.id);
         if(user && isRealString(message.text)) {
-            io.to(user.room).emit("newMessage", generateMessage(user.name, message.text));
+            io.to(user.currentRoom).emit("newMessage", generateMessage(user.name, message.text));
         }
 
         callback();
@@ -62,7 +70,7 @@ io.on("connection", (socket) => {
     socket.on("createLocationMessage", (coords) => {
         const user = users.getUser(socket.id);
         if(user) {
-            io.to(user.room).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude));
+            io.to(user.currentRoom).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude));
         }
         
     });
@@ -71,8 +79,8 @@ io.on("connection", (socket) => {
         const user = users.removeUser(socket.id);
 
         if(user) {
-            io.to(user.room).emit("updateUserList", users.getUserList(user.room));
-            io.to(user.room).emit("newMessage", generateMessage("Server", `${user.name} has left the server.`));
+            io.to(user.currentRoom).emit("updateUserList", users.getUserList(user.currentRoom));
+            io.to(user.currentRoom).emit("newMessage", generateMessage("Server", `${user.name} has left the server.`));
         }
     });
 
