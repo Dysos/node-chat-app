@@ -75,6 +75,25 @@ io.on("connection", (socket) => {
         
     });
 
+    socket.on("joinRoom", (data) => {
+        const user = users.getUser(socket.id);
+        const previousRoom = user.currentRoom;
+        if(user.currentRoom === data.name) {
+            return false;
+        }
+        socket.join(data.name);
+        users.changeCurrentRoom(socket.id, data.name);
+        io.emit("updateRoomList", rooms.getRoomList());
+        console.log()
+        console.log("Users in new room: ", users.getUserList(data.name));
+        io.to(data.name).emit("updateUserList", users.getUserList(data.name));
+        io.to(previousRoom).emit("updateUserList", users.getUserList(previousRoom));
+        socket.emit("updateUserList", users.getUserList(data.name));
+        socket.emit("newMessage", generateMessage("Server", `Welcome to room ${data.name}`));
+        socket.broadcast.to(data.name).emit("newMessage", generateMessage("Server", `${user.name} has joined the server`));
+        socket.broadcast.to(previousRoom).emit("newMessage", generateMessage("Server", `${user.name} has left the room`))
+    });
+
     socket.on("disconnect", () => {
         const user = users.removeUser(socket.id);
 

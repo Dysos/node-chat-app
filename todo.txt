@@ -9,7 +9,7 @@ by typing it in (DONE)
 
 fixed scroll bug (DONE)
 
-users can join room by clicking on it
+users can join room by clicking on it (DONE)
 
 
 

@@ -96,6 +96,7 @@ class Users {
 
     changeCurrentRoom(id, roomName) {
         const user = this.users.find((user) => user.id === id);
+        console.log(typeof roomName, roomName);
         user.changeRoom(roomName.toLowerCase());
         console.log(roomName);
         console.log(user);

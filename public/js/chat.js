@@ -74,6 +74,7 @@ const socket = io();
             });
             document.querySelector("#rooms").innerHTML = "";
             document.querySelector("#rooms").appendChild(ol);
+            console.log(document.querySelector("#rooms").children);
         });
 
 
@@ -137,6 +138,15 @@ const socket = io();
                 text: messageTextBox.value,
             }, function() {
                 messageTextBox.value = "";
+            });
+        });
+
+        document.querySelector("#rooms").addEventListener("click", function(e) {
+            const room = e.target.textContent;
+            socket.emit("joinRoom", {
+                name: room
+            }, function() {
+                //
             });
         });
 
